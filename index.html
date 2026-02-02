@@ -29,6 +29,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #fdba74;
         }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-amber-50">
@@ -58,7 +65,8 @@
                 box: <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />,
                 maximize: <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />,
                 minimize: <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />,
-                mapPinned: <path d="M18 8c0 4.5-6 9-6 9s-6-4.5-6-9a6 6 0 0 1 12 0" />
+                mapPinned: <path d="M18 8c0 4.5-6 9-6 9s-6-4.5-6-9a6 6 0 0 1 12 0" />,
+                arrowRightCircle: <circle cx="12" cy="12" r="10" />
             };
 
             return (
@@ -87,6 +95,8 @@
                     {name === 'mapPinned' && <circle cx="12" cy="8" r="2" />}
                     {name === 'layout' && <line x1="3" x2="21" y1="9" y2="9" />}
                     {name === 'layout' && <line x1="9" x2="9" y1="21" y2="9" />}
+                    {name === 'arrowRightCircle' && <polyline points="12 16 16 12 12 8" />}
+                    {name === 'arrowRightCircle' && <line x1="8" y1="12" x2="16" y2="12" />}
                 </svg>
             );
         };
@@ -96,62 +106,62 @@
             const [currentPattern, setCurrentPattern] = useState(1);
             const [selections, setSelections] = useState({ subject: null, place: null, action: null });
             const [dirSelections, setDirSelections] = useState({ 
-                target: { id: 't1', cn: '我的猫', py: 'wǒ de māo', uz: 'Mening mushugim', emoji: '🐱' }, 
-                reference: { id: 'r1', cn: '椅子', py: 'yǐzi', uz: 'Stul', emoji: '🪑' }, 
-                position: { id: 'p1', cn: '上面', py: 'shàngmian', uz: 'ustida', icon: 'arrowUp' } 
+                target: { id: 't1', cn: '我的猫', py: 'wǒ de māo', uz: 'Mening mushugim', en: 'My cat', ru: 'Моя кошка', emoji: '🐱' }, 
+                reference: { id: 'r1', cn: '椅子', py: 'yǐzi', uz: 'Stul', en: 'Chair', ru: 'Стул', emoji: '🪑' }, 
+                position: { id: 'p1', cn: '上面', py: 'shàngmian', uz: 'ustida', en: 'on/above', ru: 'на/над', icon: 'arrowUp' } 
             });
             const [message, setMessage] = useState({ text: '', type: '' });
             const [showResult, setShowResult] = useState(false);
 
             const subjects = [
-                { id: 's1', cn: '我', py: 'wǒ', uz: 'Men' },
-                { id: 's2', cn: '医生', py: 'yīshēng', uz: 'Shifokor' },
-                { id: 's3', cn: '我女儿', py: 'wǒ nǚ\'ér', uz: 'Qizim' },
-                { id: 's4', cn: '我朋友', py: 'wǒ péngyou', uz: "Do'stim" },
+                { id: 's1', cn: '我', py: 'wǒ', uz: 'Men', en: 'I', ru: 'Я' },
+                { id: 's2', cn: '医生', py: 'yīshēng', uz: 'Shifokor', en: 'Doctor', ru: 'Врач' },
+                { id: 's3', cn: '我女儿', py: 'wǒ nǚ\'ér', uz: 'Qizim', en: 'My daughter', ru: 'Моя дочь' },
+                { id: 's4', cn: '我朋友', py: 'wǒ péngyou', uz: "Do'stim", en: 'My friend', ru: 'Мой друг' },
             ];
 
             const places = [
-                { id: 'p1', cn: '学校', py: 'xuéxiào', uz: 'Maktab', icon: 'school' },
-                { id: 'p2', cn: '医院', py: 'yīyuàn', uz: 'Shifoxona', icon: 'building' },
-                { id: 'p3', cn: '家', py: 'jiā', uz: 'Uy', icon: 'home' },
-                { id: 'p4', cn: '这儿', py: 'zhèr', uz: 'Shu yer', icon: 'mapPin', color: 'text-blue-500' },
-                { id: 'p5', cn: '那儿', py: 'nàr', uz: 'U yer', icon: 'mapPinned', color: 'text-slate-400' },
+                { id: 'p1', cn: '学校', py: 'xuéxiào', uz: 'Maktab', en: 'School', ru: 'Школа', icon: 'school' },
+                { id: 'p2', cn: '医院', py: 'yīyuàn', uz: 'Shifoxona', en: 'Hospital', ru: 'Больница', icon: 'building' },
+                { id: 'p3', cn: '家', py: 'jiā', uz: 'Uy', en: 'Home', ru: 'Дом', icon: 'home' },
+                { id: 'p4', cn: '这儿', py: 'zhèr', uz: 'Shu yer', en: 'Here', ru: 'Здесь', icon: 'mapPin', color: 'text-blue-500' },
+                { id: 'p5', cn: '那儿', py: 'nàr', uz: 'U yer', en: 'There', ru: 'Там', icon: 'mapPinned', color: 'text-slate-400' },
             ];
 
             const actions = [
-                { id: 'a1', cn: '工作', py: 'gōngzuò', uz: 'ishlamoq' },
-                { id: 'a2', cn: '学习', py: 'xuéxí', uz: "o'qimoq" },
-                { id: 'a3', cn: '喝茶', py: 'hē chá', uz: 'choy ichmoq' },
-                { id: 'a4', cn: '写汉字', py: 'xiě hànzì', uz: 'iyeroglif yozmoq' },
-                { id: 'a5', cn: '说汉语', py: 'shuō hànyǔ', uz: 'xitoy tilida gapirmoq' },
-                { id: 'a6', cn: '吃米饭', py: 'chī mǐfàn', uz: 'guruch yemoq' },
-                { id: 'a7', cn: '读书', py: 'dúshū', uz: "kitob o'qimoq" },
-                { id: 'a8', cn: '做菜', py: 'zuò cài', uz: 'ovqat pishirmoq' },
+                { id: 'a1', cn: '工作', py: 'gōngzuò', uz: 'ishlamoq', en: 'to work', ru: 'работать' },
+                { id: 'a2', cn: '学习', py: 'xuéxi', uz: "o'qimoq", en: 'to study', ru: 'учиться' },
+                { id: 'a3', cn: '喝茶', py: 'hē chá', uz: 'choy ichmoq', en: 'to drink tea', ru: 'пить чай' },
+                { id: 'a4', cn: '写汉字', py: 'xiě hànzì', uz: 'iyeroglif yozmoq', en: 'to write characters', ru: 'писать иероглифы' },
+                { id: 'a5', cn: '说汉语', py: 'shuō hànyǔ', uz: 'xitoy tilida gapirmoq', en: 'to speak Chinese', ru: 'говорить по-китайски' },
+                { id: 'a6', cn: '吃米饭', py: 'chī mǐfàn', uz: 'guruch yemoq', en: 'to eat rice', ru: 'есть рис' },
+                { id: 'a7', cn: '读书', py: 'dúshū', uz: "kitob o'qimoq", en: 'to read a book', ru: 'читать книгу' },
+                { id: 'a8', cn: '做菜', py: 'zuò cài', uz: 'ovqat pishirmoq', en: 'to cook', ru: 'готовить' },
             ];
 
             const directionTargets = [
-                { id: 't1', cn: '我的猫', py: 'wǒ de māo', uz: 'Mening mushugim', emoji: '🐱' },
-                { id: 't2', cn: '我的狗', py: 'wǒ de gǒu', uz: 'Mening kuchugim', emoji: '🐶' },
-                { id: 't3', cn: '杯子', py: 'bēizi', uz: 'Finjon', emoji: '☕' },
+                { id: 't1', cn: '我的猫', py: 'wǒ de māo', uz: 'Mening mushugim', en: 'My cat', ru: 'Моя кошка', emoji: '🐱' },
+                { id: 't2', cn: '我的狗', py: 'wǒ de gǒu', uz: 'Mening kuchugim', en: 'My dog', ru: 'Моя собака', emoji: '🐶' },
+                { id: 't3', cn: '杯子', py: 'bēizi', uz: 'Finjon', en: 'Cup', ru: 'Чашка', emoji: '☕' },
             ];
 
             const references = [
-                { id: 'r1', cn: '椅子', py: 'yǐzi', uz: 'Stul', emoji: '🪑' },
-                { id: 'r2', cn: '桌子', py: 'zhuōzi', uz: 'Stol', emoji: 'table' }, 
-                { id: 'r3', cn: '医院', py: 'yīyuàn', uz: 'Shifoxona', emoji: '🏥' },
-                { id: 'r4', cn: '家', py: 'jiā', uz: 'Uy', emoji: '🏠' },
-                { id: 'r5', cn: '学校', py: 'xuéxiào', uz: 'Maktab', emoji: '🏫' },
+                { id: 'r1', cn: '椅子', py: 'yǐzi', uz: 'Stul', en: 'Chair', ru: 'Стул', emoji: '🪑' },
+                { id: 'r2', cn: '桌子', py: 'zhuōzi', uz: 'Stol', en: 'Table', ru: 'Стол', emoji: 'table' }, 
+                { id: 'r3', cn: '医院', py: 'yīyuàn', uz: 'Shifoxona', en: 'Hospital', ru: 'Больница', emoji: '🏥' },
+                { id: 'r4', cn: '家', py: 'jiā', uz: 'Uy', en: 'Home', ru: 'Дом', emoji: '🏠' },
+                { id: 'r5', cn: '学校', py: 'xuéxiào', uz: 'Maktab', en: 'School', ru: 'Школа', emoji: '🏫' },
             ];
 
             const positions = [
-                { id: 'p1', cn: '上面', py: 'shàngmian', uz: 'ustida', icon: 'arrowUp', posClass: "bottom-[110%] left-1/2 -translate-x-1/2" },
-                { id: 'p2', cn: '下面', py: 'xiàmian', uz: 'ostida', icon: 'arrowDown', posClass: "top-[70%] left-1/2 -translate-x-1/2 scale-75 opacity-80" },
-                { id: 'p3', cn: '前面', py: 'qiánmian', uz: 'oldida', icon: 'moveDown', posClass: "top-[85%] left-1/2 -translate-x-1/2 z-10" },
-                { id: 'p4', cn: '后面', py: 'hòumian', uz: 'orqasida', icon: 'moveUp', posClass: "bottom-[80%] left-1/4 -translate-x-1/2 opacity-40 scale-90" },
-                { id: 'p5', cn: '左边', py: 'zuǒbian', uz: 'chapida', icon: 'arrowLeft', posClass: "top-1/2 right-[105%] -translate-y-1/2" },
-                { id: 'p6', cn: '右边', py: 'yòubian', uz: "o'ngida", icon: 'arrowRight', posClass: "top-1/2 left-[105%] -translate-y-1/2" },
-                { id: 'p7', cn: '里面', py: 'lǐmiàn', uz: 'ichida', icon: 'minimize', posClass: "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-50 opacity-60" },
-                { id: 'p8', cn: '外面', py: 'wàimiàn', uz: 'tashqarisida', icon: 'maximize', posClass: "top-1/2 left-[150%] -translate-y-1/2" },
+                { id: 'p1', cn: '上面', py: 'shàngmian', uz: 'ustida', en: 'on/above', ru: 'на/над', icon: 'arrowUp', posClass: "bottom-[110%] left-1/2 -translate-x-1/2" },
+                { id: 'p2', cn: '下面', py: 'xiàmian', uz: 'ostida', en: 'under', ru: 'под', icon: 'arrowDown', posClass: "top-[70%] left-1/2 -translate-x-1/2 scale-75 opacity-80" },
+                { id: 'p3', cn: '前面', py: 'qiánmian', uz: 'oldida', en: 'in front of', ru: 'перед', icon: 'moveDown', posClass: "top-[85%] left-1/2 -translate-x-1/2 z-10" },
+                { id: 'p4', cn: '后面', py: 'hòumian', uz: 'orqasida', en: 'behind', ru: 'за/сзади', icon: 'moveUp', posClass: "bottom-[80%] left-1/4 -translate-x-1/2 opacity-40 scale-90" },
+                { id: 'p5', cn: '左边', py: 'zuǒbian', uz: 'chapida', en: 'on the left', ru: 'слева', icon: 'arrowLeft', posClass: "top-1/2 right-[105%] -translate-y-1/2" },
+                { id: 'p6', cn: '右边', py: 'yòubian', uz: "o'ngida", en: 'on the right', ru: 'справа', icon: 'arrowRight', posClass: "top-1/2 left-[105%] -translate-y-1/2" },
+                { id: 'p7', cn: '里面', py: 'lǐmiàn', uz: 'ichida', en: 'inside', ru: 'внутри', icon: 'minimize', posClass: "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-50 opacity-60" },
+                { id: 'p8', cn: '外面', py: 'wàimiàn', uz: 'tashqarisida', en: 'outside', ru: 'снаружи', icon: 'maximize', posClass: "top-1/2 left-[150%] -translate-y-1/2" },
             ];
 
             const handleSelect = (type, item) => {
@@ -168,12 +178,12 @@
             const checkSentence = () => {
                 if (currentPattern === 1 && selections.subject && selections.place) {
                     setShowResult(true);
-                    setMessage({ text: 'To\'g\'ri! (正确!)', type: 'success' });
+                    setMessage({ text: 'To\'g\'ri! / Correct! / Верно!', type: 'success' });
                 } else if (currentPattern === 2 && selections.subject && selections.place && selections.action) {
                     setShowResult(true);
-                    setMessage({ text: 'To\'g\'ri! (正确!)', type: 'success' });
+                    setMessage({ text: 'To\'g\'ri! / Correct! / Верно!', type: 'success' });
                 } else {
-                    setMessage({ text: 'Iltimos, tanlang. (请选择)', type: 'error' });
+                    setMessage({ text: 'Iltimos, tanlang. / Please select. / Выберите.', type: 'error' });
                 }
             };
 
@@ -184,98 +194,154 @@
                         {/* Header */}
                         <div className="bg-amber-50/50 p-6 text-center border-b border-amber-100/50">
                             <h1 className="text-xl md:text-3xl font-bold text-slate-900 mb-1">第九课：你儿子在哪儿工作？</h1>
-                            <p className="text-amber-700/70 text-xs md:text-base font-medium mb-4">Dilfuza Kāng lǎo shī bilan xitoy tilini o'rganmiz</p>
+                            <div className="text-[10px] md:text-sm text-slate-500 mb-1">
+                                Lesson 9: Where does your son work? / Урок 9: Где работает твой сын?
+                            </div>
+                            <p className="text-amber-700/70 text-[10px] md:text-base font-medium mb-4 italic">Dilfuza Kāng lǎo shī bilan xitoy tilini o'rganmiz</p>
                             
                             <div className="flex justify-center gap-2 md:gap-4">
                                 <button 
                                     onClick={() => setActiveTab('patterns')}
-                                    className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition flex items-center gap-2 ${activeTab === 'patterns' ? 'bg-orange-500 text-white shadow-md' : 'bg-orange-100 text-orange-600 hover:bg-orange-200'}`}
+                                    className={`px-3 py-2 rounded-xl transition flex flex-col items-center gap-0.5 ${activeTab === 'patterns' ? 'bg-orange-500 text-white shadow-md' : 'bg-orange-100 text-orange-600 hover:bg-orange-200'}`}
                                 >
-                                    <Icon name="layout" size={16} /> Gap tuzilishi
+                                    <div className="flex items-center gap-1 font-bold text-[10px] md:text-sm">
+                                        <Icon name="layout" size={14} /> Gap tuzilishi
+                                    </div>
+                                    <div className="text-[8px] opacity-80">Structure / Структура</div>
                                 </button>
                                 <button 
                                     onClick={() => setActiveTab('directions')}
-                                    className={`px-4 py-2 rounded-full text-xs md:text-sm font-bold transition flex items-center gap-2 ${activeTab === 'directions' ? 'bg-orange-500 text-white shadow-md' : 'bg-orange-100 text-orange-600 hover:bg-orange-200'}`}
+                                    className={`px-3 py-2 rounded-xl transition flex flex-col items-center gap-0.5 ${activeTab === 'directions' ? 'bg-orange-500 text-white shadow-md' : 'bg-orange-100 text-orange-600 hover:bg-orange-200'}`}
                                 >
-                                    <Icon name="compass" size={16} /> Yo'nalishlar
+                                    <div className="flex items-center gap-1 font-bold text-[10px] md:text-sm">
+                                        <Icon name="compass" size={14} /> Yo'nalishlar
+                                    </div>
+                                    <div className="text-[8px] opacity-80">Directions / Направления</div>
                                 </button>
                             </div>
                         </div>
 
                         {activeTab === 'patterns' ? (
                             <div className="fade-in">
-                                <div className="flex border-b text-xs md:text-sm">
+                                <div className="flex border-b text-[10px] md:text-sm">
                                     <button 
                                         onClick={() => { setCurrentPattern(1); reset(); }}
-                                        className={`flex-1 p-3 font-semibold transition ${currentPattern === 1 ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/30' : 'text-slate-400'}`}
+                                        className={`flex-1 p-3 font-semibold transition flex flex-col items-center ${currentPattern === 1 ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/30' : 'text-slate-400'}`}
                                     >
-                                        1: Ega + 在 + Place
+                                        <span>1: Ega + 在 + Place</span>
+                                        <span className="text-[8px] opacity-70">Subject + zài + Place / Подлежащее + zài + Место</span>
                                     </button>
                                     <button 
                                         onClick={() => { setCurrentPattern(2); reset(); }}
-                                        className={`flex-1 p-3 font-semibold transition ${currentPattern === 2 ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/30' : 'text-slate-400'}`}
+                                        className={`flex-1 p-3 font-semibold transition flex flex-col items-center ${currentPattern === 2 ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/30' : 'text-slate-400'}`}
                                     >
-                                        2: Ega + 在 + Place + Fe'l
+                                        <span>2: Ega + 在 + Place + Fe'l</span>
+                                        <span className="text-[8px] opacity-70">+ Action / + Действие</span>
                                     </button>
                                 </div>
 
                                 <div className="p-4 md:p-6 bg-white">
                                     <div className="bg-orange-50/50 border-l-4 border-orange-300 p-3 mb-6 rounded-r-lg">
                                         <div className="flex items-center gap-2 text-sm md:text-lg overflow-x-auto whitespace-nowrap py-1 custom-scrollbar">
-                                            <span className="bg-white px-2 py-1 rounded shadow-sm border border-orange-100 text-xs md:text-sm">Ega</span>
+                                            <div className="flex flex-col items-center bg-white px-2 py-1 rounded shadow-sm border border-orange-100">
+                                                <span className="text-xs md:text-sm">Ega</span>
+                                                <span className="text-[8px] text-slate-400">Subj/Подл.</span>
+                                            </div>
                                             <span className="text-orange-400 font-bold">+</span>
-                                            <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded shadow-sm font-bold border border-blue-100 text-xs md:text-sm">在</span>
+                                            <div className="flex flex-col items-center bg-blue-50 text-blue-600 px-2 py-1 rounded shadow-sm font-bold border border-blue-100">
+                                                <span className="text-xs md:text-sm">在</span>
+                                                <span className="text-[8px]">zài</span>
+                                            </div>
                                             <span className="text-orange-400 font-bold">+</span>
-                                            <span className="bg-white px-2 py-1 rounded shadow-sm border border-orange-100 text-xs md:text-sm">O'rin-joy</span>
+                                            <div className="flex flex-col items-center bg-white px-2 py-1 rounded shadow-sm border border-orange-100">
+                                                <span className="text-xs md:text-sm">O'rin-joy</span>
+                                                <span className="text-[8px] text-slate-400">Place/Место</span>
+                                            </div>
                                             {currentPattern === 2 && (
                                                 <>
                                                     <span className="text-orange-400 font-bold">+</span>
-                                                    <span className="bg-white px-2 py-1 rounded shadow-sm border border-orange-100 text-xs md:text-sm">Fe'l</span>
+                                                    <div className="flex flex-col items-center bg-white px-2 py-1 rounded shadow-sm border border-orange-100">
+                                                        <span className="text-xs md:text-sm">Fe'l</span>
+                                                        <span className="text-[8px] text-slate-400">Verb/Глаг.</span>
+                                                    </div>
                                                 </>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-                                        <div className="space-y-3">
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">1. Subject (Ega)</label>
+                                    <div className="flex flex-col md:flex-row gap-4 md:gap-4">
+                                        {/* Step 1: Ega */}
+                                        <div className="flex-1 space-y-3">
+                                            <div className="flex flex-col leading-tight mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1. Subject (Ega)</label>
+                                                <span className="text-[8px] text-slate-400">Подлежащее / Subject</span>
+                                            </div>
                                             <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
                                                 {subjects.map(s => (
                                                     <button key={s.id} onClick={() => handleSelect('subject', s)} className={`p-2 md:p-3 rounded-xl border-2 transition-all flex flex-col items-center ${selections.subject?.id === s.id ? 'border-purple-400 bg-purple-50' : 'border-slate-50 bg-white hover:border-purple-200'}`}>
                                                         <span className="text-sm md:text-lg font-bold">{s.cn}</span>
                                                         <span className="text-[10px] md:text-xs text-slate-400">{s.py}</span>
-                                                        <span className="text-[10px] md:text-sm italic text-purple-600">{s.uz}</span>
+                                                        <div className="text-[10px] md:text-sm text-center leading-tight">
+                                                            <div className="italic text-purple-600">{s.uz}</div>
+                                                            <div className="text-[8px] md:text-[10px] text-slate-400">{s.en} / {s.ru}</div>
+                                                        </div>
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        <div className="space-y-3">
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">2. Place (O'rin-joy)</label>
+                                        {/* Fixed "在" separator */}
+                                        <div className="hidden md:flex flex-col items-center justify-start pt-8">
+                                            <div className="bg-blue-100 text-blue-600 p-3 rounded-full flex items-center justify-center font-bold shadow-sm border border-blue-200">
+                                                在
+                                            </div>
+                                            <div className="mt-2 text-[10px] font-mono text-blue-400">zài</div>
+                                            <Icon name="arrowRightCircle" size={20} className="mt-4 text-slate-200" />
+                                        </div>
+                                        <div className="md:hidden flex items-center justify-center py-2">
+                                            <div className="bg-blue-100 text-blue-600 px-4 py-1 rounded-full font-bold text-sm border border-blue-200">
+                                                在 (zài)
+                                            </div>
+                                        </div>
+
+                                        {/* Step 2: Place */}
+                                        <div className="flex-1 space-y-3">
+                                            <div className="flex flex-col leading-tight mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">2. Place (O'rin-joy)</label>
+                                                <span className="text-[8px] text-slate-400">Место / Place</span>
+                                            </div>
                                             <div className="grid grid-cols-1 gap-2 max-h-[25vh] md:max-h-[40vh] overflow-y-auto pr-1 custom-scrollbar">
                                                 {places.map(p => (
                                                     <button key={p.id} onClick={() => handleSelect('place', p)} className={`p-2 md:p-3 rounded-xl border-2 transition-all flex items-center gap-3 ${selections.place?.id === p.id ? 'border-green-400 bg-green-50' : 'border-slate-50 bg-white hover:border-green-200'}`}>
                                                         <div className={selections.place?.id === p.id ? 'text-green-600' : (p.color || 'text-slate-300')}>
                                                             <Icon name={p.icon} size={24} />
                                                         </div>
-                                                        <div className="text-left">
-                                                            <div className="text-sm md:text-lg font-bold leading-tight">{p.cn}</div>
+                                                        <div className="text-left leading-tight">
+                                                            <div className="text-sm md:text-lg font-bold">{p.cn}</div>
                                                             <div className="text-[10px] md:text-xs text-slate-400">{p.py}</div>
-                                                            <div className="text-[10px] md:text-sm italic text-green-600">{p.uz}</div>
+                                                            <div className="italic text-green-600 text-[10px] md:text-sm">{p.uz}</div>
+                                                            <div className="text-[8px] md:text-[10px] text-slate-400">{p.en} / {p.ru}</div>
                                                         </div>
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        <div className={`space-y-3 transition-opacity ${currentPattern === 1 ? 'opacity-20 pointer-events-none hidden md:block' : 'opacity-100'}`}>
-                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">3. Verb (Fe'l)</label>
+                                        {/* Step 3: Verb */}
+                                        <div className={`flex-1 space-y-3 transition-opacity ${currentPattern === 1 ? 'opacity-20 pointer-events-none hidden md:block' : 'opacity-100'}`}>
+                                            <div className="flex flex-col leading-tight mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">3. Verb (Fe'l)</label>
+                                                <span className="text-[8px] text-slate-400">Действие / Verb</span>
+                                            </div>
                                             <div className="grid grid-cols-2 md:grid-cols-1 gap-2 max-h-[25vh] md:max-h-[40vh] overflow-y-auto pr-1 custom-scrollbar">
                                                 {actions.map(a => (
                                                     <button key={a.id} onClick={() => handleSelect('action', a)} className={`p-2 md:p-3 rounded-xl border-2 transition-all flex flex-col items-center ${selections.action?.id === a.id ? 'border-indigo-400 bg-indigo-50' : 'border-slate-50 bg-white hover:border-indigo-200'}`}>
                                                         <span className="text-sm md:text-lg font-bold">{a.cn}</span>
                                                         <span className="text-[10px] md:text-xs text-slate-400">{a.py}</span>
-                                                        <span className="text-[10px] md:text-sm italic text-indigo-600">{a.uz}</span>
+                                                        <div className="text-[10px] md:text-sm text-center leading-tight">
+                                                            <div className="italic text-indigo-600">{a.uz}</div>
+                                                            <div className="text-[8px] md:text-[10px] text-slate-400">{a.en} / {a.ru}</div>
+                                                        </div>
                                                     </button>
                                                 ))}
                                             </div>
@@ -304,21 +370,34 @@
                                             )}
                                         </div>
                                         {showResult && (
-                                            <div className="mt-4 animate-bounce text-orange-400 text-xs md:text-lg italic font-medium">
-                                                "{selections.subject?.uz} {selections.place?.uz}da {currentPattern === 2 ? selections.action?.uz : 'dir'}"
+                                            <div className="mt-4 flex flex-col items-center animate-bounce">
+                                                <div className="text-orange-400 text-xs md:text-lg italic font-medium">
+                                                    "{selections.subject?.uz} {selections.place?.uz}da {currentPattern === 2 ? selections.action?.uz : 'dir'}"
+                                                </div>
+                                                <div className="text-[8px] md:text-xs text-slate-400 italic">
+                                                    EN: {selections.subject?.en} is at {selections.place?.en} {currentPattern === 2 ? selections.action?.en : ''}
+                                                    <br/>
+                                                    RU: {selections.subject?.ru} в {selections.place?.ru} {currentPattern === 2 ? selections.action?.ru : ''}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="mt-6 flex flex-col items-center gap-3">
                                         {message.text && (
-                                            <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[9px] md:text-xs font-bold ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                                 {message.type === 'success' && <Icon name="check" size={16} />} {message.text}
                                             </div>
                                         )}
                                         <div className="flex gap-2 w-full md:w-auto">
-                                            <button onClick={reset} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-orange-50 text-orange-600 rounded-xl font-bold hover:bg-orange-100 transition"><Icon name="rotate" size={18} /> Tazalash</button>
-                                            <button onClick={checkSentence} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition shadow-lg shadow-orange-200">Tekshirish</button>
+                                            <button onClick={reset} className="flex-1 md:flex-none flex flex-col items-center justify-center p-2 md:px-4 md:py-3 bg-orange-50 text-orange-600 rounded-xl font-bold hover:bg-orange-100 transition border border-orange-100">
+                                                <div className="flex items-center gap-1 text-[10px] md:text-base"><Icon name="rotate" size={16} /> Tazalash</div>
+                                                <div className="text-[8px] opacity-70">Reset / Сбросить</div>
+                                            </button>
+                                            <button onClick={checkSentence} className="flex-1 md:flex-none flex flex-col items-center justify-center p-2 md:px-6 md:py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                                                <div className="text-[10px] md:text-base">Tekshirish</div>
+                                                <div className="text-[8px] opacity-80 text-white/90 font-normal">Check / Проверить</div>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -327,8 +406,11 @@
                             <div className="p-4 md:p-6 bg-white">
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <div className="flex flex-col items-center justify-center bg-amber-50/30 rounded-2xl p-6 md:p-12 min-h-[300px] md:min-h-[400px] border-2 border-dashed border-orange-100 relative overflow-hidden">
-                                        <div className="absolute top-3 left-3 text-orange-200 font-bold uppercase tracking-widest text-[10px] flex items-center gap-1">
-                                            <Icon name="box" size={12} /> Laboratoriya
+                                        <div className="absolute top-3 left-3 flex flex-col leading-tight">
+                                            <div className="text-orange-200 font-bold uppercase tracking-widest text-[10px] flex items-center gap-1">
+                                                <Icon name="box" size={12} /> Laboratoriya
+                                            </div>
+                                            <span className="text-[8px] text-orange-200">Laboratory / Лаборатория</span>
                                         </div>
 
                                         <div className="relative w-32 h-32 md:w-48 md:h-48 flex items-center justify-center scale-90 md:scale-100">
@@ -348,47 +430,66 @@
                                             </div>
                                         </div>
 
-                                        <div className="mt-12 md:mt-20 w-full text-center p-3 md:p-4 bg-white rounded-xl shadow-sm border border-orange-50">
+                                        <div className="mt-12 md:mt-20 w-full text-center p-3 md:p-4 bg-white rounded-xl shadow-sm border border-orange-50 leading-tight">
                                             <p className="text-lg md:text-2xl font-bold text-slate-800">
                                                 <span className="text-purple-600">{dirSelections.target.cn}</span> <span className="text-blue-500 mx-1">在</span> <span className="text-green-600">{dirSelections.reference.cn}</span> <span className="text-orange-500">{dirSelections.position.cn}</span>。
                                             </p>
                                             <p className="text-[10px] md:text-sm text-slate-400 font-mono mt-1">
                                                 <span className="text-purple-600">{dirSelections.target.py}</span> zài {dirSelections.reference.py} <span className="text-orange-500 font-bold">{dirSelections.position.py}</span>.
                                             </p>
-                                            <p className="text-blue-600 italic font-medium text-xs md:text-base mt-2 border-t pt-2 border-orange-50">
+                                            <p className="text-blue-600 italic font-medium text-xs md:text-base mt-2 border-t pt-2 border-slate-50">
                                                 <span className="text-purple-600">{dirSelections.target.uz}</span> {dirSelections.reference.uz}ning <span className="text-orange-500 font-bold">{dirSelections.position.uz}</span>.
+                                            </p>
+                                            <p className="text-[8px] md:text-xs text-slate-400 mt-1">
+                                                EN: {dirSelections.target.en} is {dirSelections.position.en} the {dirSelections.reference.en}.
+                                                <br/>
+                                                RU: {dirSelections.target.ru} {dirSelections.position.ru} {dirSelections.reference.ru}.
                                             </p>
                                         </div>
                                     </div>
 
                                     <div className="space-y-4 md:space-y-6">
                                         <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-2 block">1. Narsani tanlang</label>
+                                            <div className="flex flex-col leading-none mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">1. Narsani tanlang</label>
+                                                <span className="text-[8px] text-slate-400 italic">Select Object / Выберите предмет</span>
+                                            </div>
                                             <div className="flex gap-2">
                                                 {directionTargets.map(t => (
                                                     <button key={t.id} onClick={() => setDirSelections(p => ({...p, target: t}))} className={`flex-1 p-2 md:p-3 rounded-xl border-2 transition ${dirSelections.target.id === t.id ? 'border-purple-500 bg-purple-50' : 'bg-white border-slate-50'}`}>
                                                         <span className="text-xl md:text-2xl block mb-1">{t.emoji}</span>
                                                         <span className="text-[10px] md:text-xs font-bold text-purple-600">{t.cn}</span>
+                                                        <div className="text-[8px] md:text-[9px] text-slate-400 leading-none mt-1">
+                                                            {t.uz}<br/>{t.en} / {t.ru}
+                                                        </div>
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-2 block">2. Joyni tanlang</label>
+                                            <div className="flex flex-col leading-none mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">2. Joyni tanlang</label>
+                                                <span className="text-[8px] text-slate-400 italic">Select Place / Выберите место</span>
+                                            </div>
                                             <div className="grid grid-cols-3 gap-2">
                                                 {references.map(r => (
                                                     <button key={r.id} onClick={() => setDirSelections(p => ({...p, reference: r}))} className={`p-2 md:p-3 rounded-xl border-2 transition flex flex-col items-center ${dirSelections.reference.id === r.id ? 'border-green-500 bg-green-50' : 'bg-white border-slate-50'}`}>
                                                         <span className="text-xl md:text-2xl block mb-1">{r.id === 'r2' ? '🪵' : r.emoji}</span>
                                                         <span className="text-[10px] md:text-xs font-bold text-green-600">{r.cn}</span>
-                                                        <span className="text-[8px] md:text-[10px] text-slate-400 leading-tight">{r.uz}</span>
+                                                        <div className="text-[8px] md:text-[10px] text-slate-400 leading-tight text-center mt-1">
+                                                            {r.uz}<br/>{r.en}/{r.ru}
+                                                        </div>
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase mb-2 block">3. Yo'nalishni tanlang</label>
+                                            <div className="flex flex-col leading-none mb-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">3. Yo'nalishni tanlang</label>
+                                                <span className="text-[8px] text-slate-400 italic">Select Direction / Выберите направление</span>
+                                            </div>
                                             <div className="grid grid-cols-4 gap-2">
                                                 {positions.map(pos => (
                                                     <button 
@@ -404,17 +505,21 @@
                                                             <Icon name={pos.icon} size={20} />
                                                         </div>
                                                         <span className="text-[9px] md:text-xs font-bold leading-tight">{pos.cn}</span>
-                                                        <span className="text-[8px] md:text-[9px] text-slate-400 leading-none">{pos.uz}</span>
+                                                        <div className="text-[8px] md:text-[9px] text-slate-400 leading-none text-center">
+                                                            {pos.uz}<br/>{pos.en}/{pos.ru}
+                                                        </div>
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        <div className="bg-amber-50/50 p-3 rounded-xl border border-orange-100 text-[10px] md:text-xs text-slate-500">
-                                            <p className="font-bold flex items-center gap-1 text-orange-700 mb-1">
-                                                <Icon name="mapPin" size={14} /> Grammatika:
+                                        <div className="bg-amber-50/50 p-3 rounded-xl border border-orange-100 text-[9px] md:text-xs text-slate-500">
+                                            <p className="font-bold flex flex-col text-orange-700 mb-1 leading-tight">
+                                                <span className="flex items-center gap-1 text-[10px]"><Icon name="mapPin" size={14} /> Grammatika:</span>
+                                                <span className="text-[8px] opacity-80">Grammar / Грамматика</span>
                                             </p>
                                             O'zbek tilida方位词放在名词<b>后面</b>，Xitoy tilida ham xuddi shunday (B + Position). Faqat <b>在 (zài)</b> so'zini unutmang!
+                                            <br/><span className="text-[8px] opacity-60">(In Uzbek, position words go after the noun; same in Chinese. In Russian/English, they often come before or as suffixes.)</span>
                                         </div>
                                     </div>
                                 </div>
